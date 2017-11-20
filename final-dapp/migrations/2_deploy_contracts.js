@@ -1,7 +1,7 @@
 
 
-const Bike = artifacts.require("./Bike.sol");
+const BikeShare = artifacts.require("./BikeShare.sol");
 
 module.exports = (deployer) => {
-  deployer.deploy(Bike);
+  deployer.deploy(BikeShare);
 };
