@@ -97,8 +97,9 @@ contract BikeShare is Ownable {
     require(bikes[_bikeNumber].owner == msg.sender);
     _;
   }
-  modifier isAvailable(uint32 _bikeNumber) {
-    require(!bikes[_bikeNumber].isRented);
+  modifier canRent(uint32 _bikeNumber) {
+    //user isn't currently renting a bike && bike is available
+    require(bikeRented[msg.sender] == 0 && !bikes[_bikeNumber].isRented);
     _;
   }
   modifier hasRental() {
@@ -113,7 +114,7 @@ contract BikeShare is Ownable {
 	/**************************************
   * bike functions
   **************************************/
-	function rentBike(uint32 _bikeNumber) isAvailable(_bikeNumber) {
+	function rentBike(uint32 _bikeNumber) canRent(_bikeNumber) {
 	  bikeRented[msg.sender] = _bikeNumber;
 	  bikes[_bikeNumber].isRented = true;
 	  BikeRented(msg.sender, _bikeNumber, now);
@@ -127,6 +128,7 @@ contract BikeShare is Ownable {
 	
 	function returnBike() hasRental {
 	  bikes[bikeRented[msg.sender]].isRented = false;
+	  bikeRented[msg.sender] = 0;
 	  BikeReturned(msg.sender, bikeRented[msg.sender], now);
 	}
 

@@ -26,25 +26,71 @@
 <body>
   
   <div class="center">
-    <h2>Bike Share Network</h2>
+    <h2>Bike Share Dashboard</h2>
   </div>
   
   <div class="pure-g">
-    <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+    
+    
+    <div class="padding-16 pure-u-1 pure-u-sm-1-3">
       
-      <button id="purchaseCredits">Purchase Credits</button>
+      <h3>Bikes</h3>
+      
+      <p>
+        <div>Bikes Available <span id="bikesAvailable"></span></div>
+      </p>
+      <form class="pure-form">
+        <fieldset>
+          <input id="bikeSelection" type="number" placeholder="bike number" />
+        </fieldset>
+      </form>
+      <button id="rentBike" class="pure-button">Rent Bike</button>
+      <button id="returnBike" class="pure-button">Return Bike</button>
       
     </div>
-    <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+    
+    
+    <div class="padding-16 pure-u-1 pure-u-sm-1-3">
       
+      <h3>Ride</h3>
       
+      <p>
+        <div>Currently Rented Bike: <span id="bikeRented"></span></div>
+      </p>
+      <form class="pure-form">
+        <fieldset>
+          <input id="kmSelection" type="number" />
+        </fieldset>
+      </form>
+      <button id="rideBike" class="pure-button" placeholder="distance (km)">Ride Bike</button>
+      
+      <p>
+        <div>Rental: <span id="rentalKMs"></span></div>
+      </p>
+      <p>
+        <div>Total Bike: <span id="totalKMs"></span></div>
+      </p>
       
     </div>
-    <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+    
+    
+    <div class="padding-16 pure-u-1 pure-u-sm-1-3">
       
+      <h3>Wallet</h3>
       
+      <p>
+        <div>Credits <span id="creditBalance"></span></div>
+      </p>
+      <form class="pure-form">
+        <fieldset>
+          <input id="purchaseInput" type="number" placeholder="purchase in ETH" />
+        </fieldset>
+      </form>
+      <button id="purchaseCredits" class="pure-button">Purchase Credits</button>
       
     </div>
+  
+  
   </div>
   
   <script src="//cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.min.js"></script>
