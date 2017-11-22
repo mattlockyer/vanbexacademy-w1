@@ -37,7 +37,7 @@
       <h3>Bikes</h3>
       
       <p>
-        <div>Bikes Available <span id="bikesAvailable"></span></div>
+        <div>Bikes Available: <span id="bikesAvailable"></span></div>
       </p>
       <form class="pure-form">
         <fieldset>
@@ -64,12 +64,14 @@
       </form>
       <button id="rideBike" class="pure-button" placeholder="distance (km)">Ride Bike</button>
       
-      <p>
-        <div>Rental: <span id="rentalKMs"></span></div>
-      </p>
-      <p>
-        <div>Total Bike: <span id="totalKMs"></span></div>
-      </p>
+      <div id="rentalInfo">
+        <p>
+          <div>Rental: <span id="rentalKMs"></span></div>
+        </p>
+        <p>
+          <div>Total Bike: <span id="totalKMs"></span></div>
+        </p>
+      </div>
       
     </div>
     
@@ -79,7 +81,7 @@
       <h3>Wallet</h3>
       
       <p>
-        <div>Credits <span id="creditBalance"></span></div>
+        <div>Credits: <span id="creditBalance"></span></div>
       </p>
       <form class="pure-form">
         <fieldset>
@@ -88,6 +90,9 @@
       </form>
       <button id="purchaseCredits" class="pure-button">Purchase Credits</button>
       
+      <p>
+        <div>ETH Available: <span id="ethBalance"></span></div>
+      </p>
     </div>
   
   

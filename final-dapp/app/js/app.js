@@ -15,25 +15,33 @@ const APP = {
     //set listeners
     this.setListeners();
   },
+  /**************************************
+  * refresh the ui with updated contract state
+  **************************************/
   async refreshCredits() {
     const { contract, currentUser } = BikeShare;
     this.credits = (await contract.credits.call(currentUser)).toNumber();
     qs('#creditBalance').innerHTML = this.credits;
+    qs('#ethBalance').innerHTML = web3.fromWei(await web3.eth.getBalance(currentUser), 'ether').toString().substring(0, 8);
   },
   async refreshBikes() {
     const { credits } = this;
-    console.log(credits);
     const { contract, currentUser } = BikeShare;
     const bikes = (await contract.getAvailable.call()); //gets the bike array [false, true, false, ...]
     //map the bike indexes if they're available (false), filter, slice first index then join array
     qs('#bikesAvailable').innerHTML = bikes.map((v, i) => !v ? i : false).filter(v => v !== false).slice(1).join(', ');
+    //get the currently rented bicycle
     const bikeRented = (await contract.bikeRented.call(currentUser)).toNumber();
     qs('#bikeRented').innerHTML = bikeRented === 0 ? 'none' : bikeRented;
+    //disabling buttons if bike is not rented or not enough credits
     qs('#rentBike').disabled = bikeRented;
     qs('#rideBike').disabled = !bikeRented || !credits;
-    //get bike total kms
-    qs('#rentalKMs').innerHTML = bikeRented === 0 ? 'n/a' : this.kms + ' km';
-    qs('#totalKMs').innerHTML = bikeRented === 0 ? 'n/a' : (await contract.bikes.call(bikeRented))[2].toNumber() + ' km';
+    //setting bike rental info
+    qs('#rentalInfo').classList[bikeRented ? 'remove' : 'add']('hidden');
+    if (bikeRented) {
+      qs('#rentalKMs').innerHTML = this.kms + ' km';
+      qs('#totalKMs').innerHTML = (await contract.bikes.call(bikeRented))[2].toNumber() + ' km';
+    }
   },
   /**************************************
   * contract functions
