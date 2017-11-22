@@ -29,18 +29,21 @@ const BikeShare = {
     });
   },
   //events
-  CreditsPurchased({ args }) {
-    APP.refreshCredits();
+  async CreditsPurchased({ args }) {
+    await APP.refreshCredits();
+    await APP.refreshRental();
   },
-  BikeRented({ args }) {
-    APP.refreshBikes();
+  async BikeRented({ args }) {
+    await APP.refreshBikes();
+    await APP.refreshRental();
   },
-  BikeReturned({ args }) {
-    APP.refreshBikes();
+  async BikeReturned({ args }) {
+    await APP.refreshBikes();
+    await APP.refreshRental();
   },
-  BikeRode({ args }) {
-    APP.refreshCredits();
-    APP.refreshBikes();
+  async BikeRode({ args }) {
+    await APP.refreshCredits();
+    await APP.refreshRental();
   },
   /**************************************
   * helpers

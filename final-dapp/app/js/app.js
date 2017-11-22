@@ -2,6 +2,7 @@
 
 const APP = {
   
+  //state
   credits: 0,
   kms: 0,
   
@@ -12,6 +13,7 @@ const APP = {
     //get credits
     await this.refreshCredits();
     await this.refreshBikes();
+    await this.refreshRental();
     //set listeners
     this.setListeners();
   },
@@ -25,11 +27,14 @@ const APP = {
     qs('#ethBalance').innerHTML = web3.fromWei(await web3.eth.getBalance(currentUser), 'ether').toString().substring(0, 8);
   },
   async refreshBikes() {
-    const { credits } = this;
     const { contract, currentUser } = BikeShare;
     const bikes = (await contract.getAvailable.call()); //gets the bike array [false, true, false, ...]
     //map the bike indexes if they're available (false), filter, slice first index then join array
     qs('#bikesAvailable').innerHTML = bikes.map((v, i) => !v ? i : false).filter(v => v !== false).slice(1).join(', ');
+  },
+  async refreshRental() {
+    const { credits } = this;
+    const { contract, currentUser } = BikeShare;
     //get the currently rented bicycle
     const bikeRented = (await contract.bikeRented.call(currentUser)).toNumber();
     qs('#bikeRented').innerHTML = bikeRented === 0 ? 'none' : bikeRented;
