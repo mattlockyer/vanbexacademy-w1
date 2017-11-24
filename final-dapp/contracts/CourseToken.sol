@@ -28,7 +28,6 @@ contract CourseToken is Ownable {
     require(_value <= balances[msg.sender]);
     require(msg.sender == owner);
 
-    // SafeMath.sub will throw if there is not enough balance.
     balances[msg.sender] = balances[msg.sender].sub(_value);
     balances[_to] = balances[_to].add(_value);
     Transfer(msg.sender, _to, _value);
@@ -42,20 +41,13 @@ contract CourseToken is Ownable {
     return true;
   }
 
-    /**
-        @dev Logic to transfer presale tokens
-        Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from 
-        the same address will be aggregated.
-        @param _accountHolder user address
-        @param _amountofENJ balance to send out
-    */
-    function deliverTokens(address _to) internal {
-      if (balances[_to] == 0) {
-        balances[_to] = balances[_to].add(1);
-        balances[msg.sender] = balances[msg.sender].sub(1);
-        Transfer(msg.sender, _to, 1);
-      }
+  function deliverTokens(address _to) internal {
+    if (balances[_to] == 0) {
+      balances[_to] = balances[_to].add(1);
+      balances[msg.sender] = balances[msg.sender].sub(1);
+      Transfer(msg.sender, _to, 1);
     }
+  }
 
 
   function balanceOf(address _owner) public constant returns (uint256 balance) {
