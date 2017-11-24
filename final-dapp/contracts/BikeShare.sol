@@ -29,11 +29,11 @@ contract BikeShare is Ownable {
   /**************************************
   * Events
   **************************************/
-  event Donation(address _from, uint256 _amount, uint256 _time);
+  event Donation(address _from, uint256 _amount );
   event CreditsPurchased(address _to, uint256 _ethAmount, uint256 _creditAmount);
-  event BikeRented(address _renter, uint32 _bikeNumber, uint256 _time);
-  event BikeRode(address _renter, uint32 _bikeNumber, uint32 _kms, uint256 _time);
-  event BikeReturned(address _renter, uint32 _bikeNumber, uint256 _time);
+  event BikeRented(address _renter, uint32 _bikeNumber);
+  event BikeRidden(address _renter, uint32 _bikeNumber, uint32 _kms);
+  event BikeReturned(address _renter, uint32 _bikeNumber);
 	
 	/**************************************
   * constructor
@@ -41,7 +41,7 @@ contract BikeShare is Ownable {
 	function BikeShare() {
 	  //init with 5 bikes from the bikeshare owner
 	  //we never rent bike 0, so we'll initialize 6 bikes
-	  for (uint32 i = 0; i < 6; i++) {
+	  for (uint8 i = 0; i < 6; i++) {
 	    bikes.push(Bike({ owner: msg.sender, isRented: false, kms: 0 }));
 	  }
 	}
@@ -60,7 +60,7 @@ contract BikeShare is Ownable {
 	function getAvailable() public constant returns (bool[]) {
 	  bool[] memory available = new bool[](bikes.length);
 	  //loop begins at index 1, never rent bike 0
-	  for (uint32 i = 1; i < bikes.length; i++) {
+	  for (uint8 i = 1; i < bikes.length; i++) {
 	    if (bikes[i].isRented) {
 	      available[i] = true;
 	    }
@@ -86,8 +86,9 @@ contract BikeShare is Ownable {
   * donating bicycles
   **************************************/
 	function donateBike() {
-	  credits[msg.sender] = donateCredits;
-	  Donation(msg.sender, donateCredits, now);
+    bikes.push(Bike({ owner: msg.sender, isRented: false, kms: 0 }));
+	  credits[msg.sender] += donateCredits;
+	  Donation(msg.sender, donateCredits);
 	}
 	
   /**************************************
@@ -98,7 +99,6 @@ contract BikeShare is Ownable {
     _;
   }
   modifier canRent(uint32 _bikeNumber) {
-    //user isn't currently renting a bike && bike is available
     require(bikeRented[msg.sender] == 0 && !bikes[_bikeNumber].isRented);
     _;
   }
@@ -117,19 +117,27 @@ contract BikeShare is Ownable {
 	function rentBike(uint32 _bikeNumber) canRent(_bikeNumber) {
 	  bikeRented[msg.sender] = _bikeNumber;
 	  bikes[_bikeNumber].isRented = true;
-	  BikeRented(msg.sender, _bikeNumber, now);
+	  BikeRented(msg.sender, _bikeNumber);
 	}
 	
 	function rideBike(uint32 _kms) hasRental hasCredits(_kms) {
 	  bikes[bikeRented[msg.sender]].kms += _kms;
 	  credits[msg.sender] -= _kms * cpkm;
-	  BikeRode(msg.sender, bikeRented[msg.sender], _kms, now);
+	  BikeRidden(msg.sender, bikeRented[msg.sender], _kms);
 	}
 	
 	function returnBike() hasRental {
 	  bikes[bikeRented[msg.sender]].isRented = false;
 	  bikeRented[msg.sender] = 0;
-	  BikeReturned(msg.sender, bikeRented[msg.sender], now);
+	  BikeReturned(msg.sender, bikeRented[msg.sender]);
 	}
+
+  // Challenge 1: Refactor the code so we only use 1 mapping 
+  // Challenge 2: Bikers should be ablt to transfer credifts to a friend
+  // Challenge 3: As of right now, the Ether is locked in the contract and cannot move,
+  // make the Ether transferrable to your address immediately upon receipt
+
+  // Advanced challenge 1: Decouple the "database" aka mapping into another contract.
+  // Advanced challenge 2: Include an overflow protection library (or inherit from a contract)
 
 }
