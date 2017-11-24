@@ -23,15 +23,7 @@ const BikeShare = {
   setEventListeners() {
     const { contract, block } = this;
     const event = contract.allEvents({ fromBlock: block, toBlock: 'latest' });
-    
-    
-    console.log(contract);
-    console.log(event);
-    
     event.watch((err, res) => {
-      
-      console.log(res);
-      
       if (err) console.log('watch error', err);
       if (this[res.event]) this[res.event](res);
     });
@@ -56,7 +48,7 @@ const BikeShare = {
   /**************************************
   * helpers
   **************************************/
-  getWeb3(fallbackURL = 'http://localhost:8545') {
+  getWeb3(fallbackURL = 'http://localhost:9545') {
     let web3;
     if (web3 !== undefined) {
       web3 = new Web3(web3.currentProvider);
