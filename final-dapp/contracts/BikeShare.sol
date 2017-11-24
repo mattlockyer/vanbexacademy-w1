@@ -29,7 +29,7 @@ contract BikeShare is Ownable {
   /**************************************
   * Events
   **************************************/
-  event Donation(address _from, uint256 _amount );
+  event Donation(address _from, uint256 _amount);
   event CreditsPurchased(address _to, uint256 _ethAmount, uint256 _creditAmount);
   event BikeRented(address _renter, uint32 _bikeNumber);
   event BikeRidden(address _renter, uint32 _bikeNumber, uint32 _kms);
@@ -38,7 +38,7 @@ contract BikeShare is Ownable {
 	/**************************************
   * constructor
   **************************************/
-	function BikeShare() {
+	function BikeShare() public {
 	  //init with 5 bikes from the bikeshare owner
 	  //we never rent bike 0, so we'll initialize 6 bikes
 	  for (uint8 i = 0; i < 6; i++) {
@@ -57,7 +57,7 @@ contract BikeShare is Ownable {
 	/**************************************
   * getters not provided by compiler
   **************************************/
-	function getAvailable() public constant returns (bool[]) {
+	function getAvailable() public view returns (bool[]) {
 	  bool[] memory available = new bool[](bikes.length);
 	  //loop begins at index 1, never rent bike 0
 	  for (uint8 i = 1; i < bikes.length; i++) {
@@ -71,7 +71,7 @@ contract BikeShare is Ownable {
 	/**************************************
   * default payable function to purchase credits
   **************************************/
-  function() payable {
+  function() payable public {
     purchaseCredits();
   }
   //buying credits using ETH
@@ -85,7 +85,7 @@ contract BikeShare is Ownable {
   /**************************************
   * donating bicycles
   **************************************/
-	function donateBike() {
+	function donateBike() public {
     bikes.push(Bike({ owner: msg.sender, isRented: false, kms: 0 }));
 	  credits[msg.sender] += donateCredits;
 	  Donation(msg.sender, donateCredits);
@@ -114,30 +114,33 @@ contract BikeShare is Ownable {
 	/**************************************
   * bike functions
   **************************************/
-	function rentBike(uint32 _bikeNumber) canRent(_bikeNumber) {
+	function rentBike(uint32 _bikeNumber) public canRent(_bikeNumber) {
 	  bikeRented[msg.sender] = _bikeNumber;
 	  bikes[_bikeNumber].isRented = true;
 	  BikeRented(msg.sender, _bikeNumber);
 	}
 	
-	function rideBike(uint32 _kms) hasRental hasCredits(_kms) {
+	function rideBike(uint32 _kms) public hasRental hasCredits(_kms) {
 	  bikes[bikeRented[msg.sender]].kms += _kms;
 	  credits[msg.sender] -= _kms * cpkm;
 	  BikeRidden(msg.sender, bikeRented[msg.sender], _kms);
 	}
 	
-	function returnBike() hasRental {
+	function returnBike() public hasRental {
 	  bikes[bikeRented[msg.sender]].isRented = false;
 	  bikeRented[msg.sender] = 0;
 	  BikeReturned(msg.sender, bikeRented[msg.sender]);
 	}
 
-  // Challenge 1: Refactor the code so we only use 1 mapping 
-  // Challenge 2: Bikers should be ablt to transfer credifts to a friend
+  // Challenge 1: Refactor the code so we only use 1 mapping
+  // Challenge 2: Bikers should be ablte to transfer credifts to a friend
   // Challenge 3: As of right now, the Ether is locked in the contract and cannot move,
   // make the Ether transferrable to your address immediately upon receipt
 
   // Advanced challenge 1: Decouple the "database" aka mapping into another contract.
   // Advanced challenge 2: Include an overflow protection library (or inherit from a contract)
+  // Advanced challenge 3: Develop an efficient way to track and store kms per rental, per user
+  // Advanced challenge 4: Add a repair bike bounty where the work can be claimed by a user and verified by another user
+  // Advanced challenge 5: Allow all users to vote on how many credits should be given for a donated bike within a time frame
 
 }

@@ -1,3 +1,5 @@
+
+
 pragma solidity ^0.4.15;
 
 import './SafeMath.sol';
@@ -37,17 +39,15 @@ contract CourseToken is Ownable {
   
   function transferMany(address[] _batchOfAddresses) external onlyOwner returns (bool) {
     for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-        deliverTokens(_batchOfAddresses[i]);            
+        deliverTokens(_batchOfAddresses[i]);
     }
     return true;
   }
 
     /**
         @dev Logic to transfer presale tokens
-        Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from 
+        Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from
         the same address will be aggregated.
-        @param _accountHolder user address
-        @param _amountofENJ balance to send out
     */
     function deliverTokens(address _to) internal {
       if (balances[_to] == 0) {

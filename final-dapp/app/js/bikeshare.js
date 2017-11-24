@@ -23,27 +23,35 @@ const BikeShare = {
   setEventListeners() {
     const { contract, block } = this;
     const event = contract.allEvents({ fromBlock: block, toBlock: 'latest' });
+    
+    
+    console.log(contract);
+    console.log(event);
+    
     event.watch((err, res) => {
+      
+      console.log(res);
+      
       if (err) console.log('watch error', err);
       if (this[res.event]) this[res.event](res);
     });
   },
   //events
   async CreditsPurchased({ args }) {
-    await APP.refreshCredits();
-    await APP.refreshRental();
+    await App.refreshCredits();
+    await App.refreshRental();
   },
   async BikeRented({ args }) {
-    await APP.refreshBikes();
-    await APP.refreshRental();
+    await App.refreshBikes();
+    await App.refreshRental();
   },
   async BikeReturned({ args }) {
-    await APP.refreshBikes();
-    await APP.refreshRental();
+    await App.refreshBikes();
+    await App.refreshRental();
   },
-  async BikeRode({ args }) {
-    await APP.refreshCredits();
-    await APP.refreshRental();
+  async BikeRidden({ args }) {
+    await App.refreshCredits();
+    await App.refreshRental();
   },
   /**************************************
   * helpers

@@ -1,6 +1,6 @@
 
 
-const APP = {
+const App = {
   
   //state
   credits: 0,
@@ -100,4 +100,4 @@ const APP = {
 
 const qs = (sel) => document.querySelector(sel);
 
-window.onload = () => APP.init();
+window.onload = () => App.init();
