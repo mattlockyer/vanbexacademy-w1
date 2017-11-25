@@ -10,7 +10,8 @@ const BikeShare = {
   **************************************/
   async init() {
     console.log('BikeShare initialized');
-    this.getWeb3();
+    //this.getWeb3(); //http://localhost:8545
+    this.getWeb3('http://localhost:9545'); //truffle develop
     this.block = web3.eth.blockNumber;
     this.currentUser = web3.eth.accounts[0];
     const json = await fetch('../../build/contracts/BikeShare.json').then((res) => res.json());
@@ -25,7 +26,7 @@ const BikeShare = {
     const event = contract.allEvents({ fromBlock: block, toBlock: 'latest' });
     event.watch((err, res) => {
       if (err) console.log('watch error', err);
-      if (this[res.event]) this[res.event](res);
+      if (this[res.event] && typeof this[res.event] === 'function') this[res.event](res);
     });
   },
   //events
@@ -48,7 +49,7 @@ const BikeShare = {
   /**************************************
   * helpers
   **************************************/
-  getWeb3(fallbackURL = 'http://localhost:9545') {
+  getWeb3(fallbackURL = 'http://localhost:8545') { //using ganache-cli
     let web3;
     if (web3 !== undefined) {
       web3 = new Web3(web3.currentProvider);
