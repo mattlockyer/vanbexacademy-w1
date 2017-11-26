@@ -1,5 +1,6 @@
 
 
+
 const BikeShare = {
   
   contract: null,
@@ -12,10 +13,13 @@ const BikeShare = {
     console.log('BikeShare initialized');
     //this.getWeb3(); //http://localhost:8545
     this.getWeb3('http://localhost:9545'); //truffle develop
-    this.block = web3.eth.blockNumber;
-    this.currentUser = web3.eth.accounts[0];
+    this.block = 0;
+    //this.block = web3.eth.blockNumber(console.log);
+    web3.eth.getAccounts((err, accounts) => {
+      this.currentUser = accounts[0];
+    });
     const json = await fetch('../../build/contracts/BikeShare.json').then((res) => res.json());
-    this.contract = await this.getContract(json);
+    this.contract = await this.getContract(json, '0xAC61aE2Bf10693c263Ac566093Cd2ffa67B0A0C9');
     this.setEventListeners();
   },
   /**************************************
@@ -49,15 +53,13 @@ const BikeShare = {
   /**************************************
   * helpers
   **************************************/
-  getWeb3(fallbackURL = 'http://localhost:8545') { //using ganache-cli
+  async getWeb3(fallbackURL = 'http://localhost:8545') { //using ganache-cli
     let web3;
-    if (web3 !== undefined) {
-      web3 = new Web3(web3.currentProvider);
+    if (window.web3 !== undefined) {
+      await new Web3(window.web3.currentProvider);
     } else {
       web3 = new Web3(new Web3.providers.HttpProvider(fallbackURL));
     }
-    window.web3 = web3;
-    return web3;
   },
   async getContract(json, address, web3 = window.web3) {
     const contract = TruffleContract(json);

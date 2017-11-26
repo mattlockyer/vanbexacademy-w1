@@ -31,7 +31,9 @@ contract BikeShare is Ownable {
   **************************************/
   event Donation(address _from, uint256 _amount);
   event CreditsPurchased(address _to, uint256 _ethAmount, uint256 _creditAmount);
+  
   event BikeRented(address _renter, uint32 _bikeNumber);
+  
   event BikeRidden(address _renter, uint32 _bikeNumber, uint32 _kms);
   event BikeReturned(address _renter, uint32 _bikeNumber);
 	
@@ -58,14 +60,12 @@ contract BikeShare is Ownable {
   * getters not provided by compiler
   **************************************/
 	function getAvailable() public view returns (bool[]) {
-	  bool[] memory available = new bool[](bikes.length);
+	  bool[] memory rented = new bool[](bikes.length);
 	  //loop begins at index 1, never rent bike 0
 	  for (uint8 i = 1; i < bikes.length; i++) {
-	    if (bikes[i].isRented) {
-	      available[i] = true;
-	    }
+	    rented[i] = bikes[i].isRented;
 	  }
-	  return available;
+	  return rented;
 	}
 	
 	/**************************************
@@ -78,8 +78,8 @@ contract BikeShare is Ownable {
   // Note the "internal"
   function purchaseCredits() internal {
     uint256 amount = msg.value / creditPrice; // flooring division
-    CreditsPurchased(msg.sender, msg.value, amount);
     credits[msg.sender] += amount;
+    CreditsPurchased(msg.sender, msg.value, amount);
   }
   
   /**************************************
@@ -107,7 +107,7 @@ contract BikeShare is Ownable {
     _;
   }
 	modifier hasCredits(uint256 _kms) {
-	  require(credits[msg.sender] - _kms * cpkm > 0);
+	  require(credits[msg.sender] - _kms * cpkm >= 0);
     _;
   }
   
@@ -121,7 +121,8 @@ contract BikeShare is Ownable {
 	}
 	
 	function rideBike(uint32 _kms) public hasRental hasCredits(_kms) {
-	  bikes[bikeRented[msg.sender]].kms += _kms;
+	  uint256 _bikeNumber = bikeRented[msg.sender];
+	  bikes[_bikeNumber].kms += _kms;
 	  credits[msg.sender] -= _kms * cpkm;
 	  BikeRidden(msg.sender, bikeRented[msg.sender], _kms);
 	}

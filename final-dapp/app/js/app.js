@@ -24,7 +24,7 @@ const App = {
     const { contract, currentUser } = BikeShare;
     this.credits = (await contract.credits.call(currentUser)).toNumber();
     qs('#creditBalance').innerHTML = this.credits;
-    qs('#ethBalance').innerHTML = web3.fromWei(await web3.eth.getBalance(currentUser), 'ether').toString().substring(0, 8);
+    qs('#ethBalance').innerHTML = web3.fromWei(await web3.eth.getBalance(currentUser, console.log), 'ether').toString().substring(0, 8);
   },
   async refreshBikes() {
     const { contract, currentUser } = BikeShare;
@@ -43,7 +43,7 @@ const App = {
     qs('#rideBike').disabled = !bikeRented || !credits;
     //setting bike rental info
     qs('#rentalInfo').classList[bikeRented ? 'remove' : 'add']('hidden');
-    if (bikeRented) {
+    if (bikeRented !== undefined) {
       qs('#rentalKMs').innerHTML = this.kms + ' km';
       qs('#totalKMs').innerHTML = (await contract.bikes.call(bikeRented))[2].toNumber() + ' km';
     }
